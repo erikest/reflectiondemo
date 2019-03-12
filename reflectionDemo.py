@@ -1,6 +1,6 @@
 #!/user/bin/python
 
-import os, sys, re
+import os, sys, re, importlib
 
 def printDetails(module, search):
 	functions = []
@@ -14,18 +14,25 @@ def printDetails(module, search):
 		print("Function: %s\nHelp: " % function)
 		help(function)
 
-def main():
-	search = raw_input("Search for: ")
-	print("Search for %s in os, sys, re" % search)
+def main():	
+	modulesStr = raw_input("Modules to load:")
+	modules = modulesStr.split(' ')
+
+	search = raw_input("Search: ")
+	
+	print("Search for %s in %s" % (search, modules))
+	
 	while (len(search) > 0):
-		print("os results: ")
-		printDetails(os, search)
-		print("\n\nsys results: ")
-		printDetails(sys, search)
-		print("\n\nre results: ")
-		printDetails(re, search)
-		print("\n\n")
-		search = raw_input("Search for: ")
+		for moduleName in modules:
+			try:
+				module = importlib.import_module(moduleName)
+				print('%s results: ' % moduleName)
+				printDetails(module, search)
+				print('\n')
+			except ImportError:
+				print('Module %s not found' % moduleName)
+	
+		search = raw_input("Search: ")
 
 if __name__ == '__main__':
 	main()
